@@ -18,7 +18,7 @@ public class PasswordPolicyTest {
     {
         HealthClinic healthClinic = new HealthClinic();
         String invalidPass = "badpass";
-        boolean isValid = HealthClinic.passwordPolicy(invalidPass);
-        assertFalse(isValid);
+        boolean inValid = HealthClinic.passwordPolicy(invalidPass);
+        assertFalse(inValid);
     }
 }

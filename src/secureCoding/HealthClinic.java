@@ -11,47 +11,40 @@ import java.util.Base64;
 import java.util.Scanner;
 public class HealthClinic 
 {
-	//the main method where the program starts
-    public static void main(String[] args) 
+	private HealthClinic()
+	{
+		//modified
+	}
+    //read user information from a specific file and perform actions based on the file
+    private static void readTheUserFile(BufferedReader bufferReaderFile, String name, String hashPass, String userType, String type) 
+    	throws IOException 
     {
-        Scanner scanner = new Scanner(System.in);
-        // 3 login attempts
-        for (int count = 0;count != 3; count++) 
+        for (String line;(line = bufferReaderFile.readLine()) != null;) 
         {
-            String name;
-            String pass;
-            System.out.println("Enter your username please:");
-            name = scanner.nextLine();
-            Log.ToLog("Login attempt for the user:" +name); //log the login attempt
-            System.out.println("Enter your password please:");
-            pass = scanner.nextLine();
-            String hashPass = getTheHash(pass);
-            String userType;
-            System.out.println("Enter the user type (Doctor/Patient/Register):");
-            userType = scanner.nextLine();
-            ReadFile(name, hashPass, userType); 
-        }
+            String[] columns = line.split("@");
+            if (columns.length >= 2 && columns[0].equalsIgnoreCase(name) && columns[1].equals(hashPass)) 
+            {
 
-    }
-    //hash for a given string using the SHA-256 algorithm
-    static String getTheHash(String hashValue) 
-    {
-        String result = "";
-        try
-        {
-            MessageDigest messageD = MessageDigest.getInstance("SHA-256");
-            result = encoding(messageD.digest(hashValue.getBytes(StandardCharsets.UTF_8)));
+                if (userType.equals(type))
+                {
+                    switch (type) 
+                    {
+                        case "Doctor":
+                            Doctor(name);
+                            break;
+                        case "Patient":
+                            Patient(name);
+                            break;
+                        case "Register":
+                            Register(name);
+                            break;
+                        default:
+                            System.out.println("Invalid user type :(");
+                            break;
+                    }
+                }
+            }
         }
-        catch (NoSuchAlgorithmException e) 
-        {
-            System.out.println("Error: the algorithm SHA-256 is not found!!");
-        }
-        return result;
-    }
-    //method to encode byte data to base64
-    private static String encoding(byte[] data) 
-    {
-        return Base64.getEncoder().encodeToString(data);
     }
     //method to read the user information from files based on the user type
     private static void ReadFile(String name, String hashPass, String type)
@@ -89,38 +82,50 @@ public class HealthClinic
             }
         }
     }
-    //read user information from a specific file and perform actions based on the file
-    private static void readTheUserFile(BufferedReader bufferReaderFile, String name, String hashPass, String userType, String expectedType) 
-    	throws IOException 
+	//the main method where the program starts
+    public static void main(String[] args) 
     {
-        for (String line;(line = bufferReaderFile.readLine()) != null;) 
+        try(Scanner scanner = new Scanner(System.in)) //modified code
         {
-            String[] columns = line.split("@");
-            if (columns.length >= 2 && columns[0].equalsIgnoreCase(name) && columns[1].equals(hashPass)) 
-            {
-
-                if (userType.equals(expectedType))
-                {
-                    switch (expectedType) 
-                    {
-                        case "Doctor":
-                            Doctor(name);
-                            break;
-                        case "Patient":
-                            Patient(name);
-                            break;
-                        case "Register":
-                            Register(name);
-                            break;
-                        default:
-                            System.out.println("Invalid user type :(");
-                            break;
-                    }
-                }
-            }
+        // 3 login attempts
+        for (int count = 0;count != 3; count++) //modified
+        {
+            String name;
+            String pass;
+            System.out.println("Enter your username please:");
+            name = scanner.nextLine();
+            Log.ToLog("Login attempt for the user:" +name); //log the login attempt
+            System.out.println("Enter your password please:");
+            pass = scanner.nextLine();
+            String hashPass = getTheHash(pass);
+            String userType;
+            System.out.println("Enter the user type (Doctor/Patient/Register):");
+            userType = scanner.nextLine();
+            ReadFile(name, hashPass, userType); 
         }
-    }
+        }
 
+    }
+    //hash for a given string using the SHA-256 algorithm
+    private static String getTheHash(String hashValue) 
+    {
+        String result = "";
+        try
+        {
+            MessageDigest messageD = MessageDigest.getInstance("SHA-256");
+            result = encoding(messageD.digest(hashValue.getBytes(StandardCharsets.UTF_8)));
+        }
+        catch (NoSuchAlgorithmException e) 
+        {
+            System.out.println("Error: the algorithm SHA-256 is not found!!");
+        }
+        return result;
+    }
+    //method to encode byte data to base64
+    private static String encoding(byte[] data) 
+    {
+        return Base64.getEncoder().encodeToString(data);
+    }
     //write the user information to a file
     private static void WriteFile(String nameFile, String name, String hashPass, int phoneNumber, String gender,int age, String UserType) 
     {
@@ -132,7 +137,7 @@ public class HealthClinic
             for (String line = bufferReader.readLine(); line != null; line = bufferReader.readLine())  
             {
                 String[] columns = line.split("@");
-                if (columns.length >= 1 && columns[0].equalsIgnoreCase(name)) 
+                if (columns.length >= 1 && name.equalsIgnoreCase(columns[0])) //modified
                 {
                     System.out.println("The username exists");
                     return;
@@ -236,18 +241,10 @@ public class HealthClinic
     private static boolean passwordPolicy(String pass) 
     {
         //checking is the password is between 8-20 characters
-        if (pass.length() >= 8 && pass.length() <= 20 &&
+        return (pass.length() >= 8 && pass.length() <= 20 && //modified code
             pass.matches(".*[A-Z].*") && //the password should contain at lest one capital letter
             pass.matches(".*[!@#$%^&*()-_=+{};:'\",.<>/?\\[\\]\\\\].*") && //the password should contain at least one symbol
-            pass.matches(".*\\d.*"))   //the password should contain at least one digit
-            
-        {  
-            return true;
-        } 
-        else 
-        {
-            return false;
-        }
+            pass.matches(".*\\d.*"));   //the password should contain at least one digit
     }
     //method for the patient-related actions
     private static void Patient(String name) 
@@ -281,7 +278,7 @@ public class HealthClinic
             for (String line;(line = bufferReader.readLine()) != null;)
             {
                 String[] columns = line.split("@");
-                if (columns.length >= 5 && columns[0].equals(name)) 
+                if (columns.length >= 5 && name.equals(columns[0])) //modified
                 {
                     String patientName = columns[0];
                     int phoneNumber = Integer.parseInt(columns[2]);
@@ -322,14 +319,14 @@ public class HealthClinic
             
             for (String line;(line = doctor.readLine()) != null;) {
                 String[] columns = line.split("@");
-                if (columns.length >= 5 && columns[0].equals(name)) 
+                if (columns.length >= 5 && name.equals(columns[0])) //modified
                 {
-                    String doctorName = columns[0];
+                    String dName = columns[0];
                     int phoneNumber = Integer.parseInt(columns[2]);
                     String gender = columns[3];
                     int age = Integer.parseInt(columns[4]);
                     System.out.println("Doctor Information for "+name);
-                    System.out.println("Name: " + doctorName);
+                    System.out.println("Name: " + dName);
                     System.out.println("Age: " + age);
                     System.out.println("Gender: " + gender);
                     System.out.println("Phone Number: " + phoneNumber);
@@ -365,7 +362,7 @@ public class HealthClinic
             for (line = bufferReaderMed.readLine(); line != null; line = bufferReaderMed.readLine()) 
             {
                 String[] columns = line.split("@");
-                if (columns.length >= 3 && columns[1].equals(name)) 
+                if (columns.length >= 3 && name.equals(columns[1])) 
                 {
                     String situation = columns[2];
                     String treatment = columns[3];
@@ -433,11 +430,11 @@ public class HealthClinic
         writeThemedicalInfo("C:\\Users\\User\\Desktop\\secure coding\\medicalinformation.txt", doctorName, pName, medicalSituation, medicalTreatment);
     }
     //method to write the medical information to a file
-    private static void writeThemedicalInfo(String fileName, String dcotorName, String patientName, String medicalSituation, String medicalTreatment)     
+    private static void writeThemedicalInfo(String fileName, String dcotorName, String patientName, String situation, String treatment)     
     {
         try (BufferedWriter bufferWriterMedical = new BufferedWriter(new FileWriter(fileName, true))) 
         {
-        	bufferWriterMedical.write(dcotorName + "@" + patientName + "@" + medicalSituation + "@" + medicalTreatment);
+        	bufferWriterMedical.write(dcotorName + "@" + patientName + "@" + situation + "@" + treatment);
         	bufferWriterMedical.newLine();
         } catch (IOException e) 
         {

@@ -5,6 +5,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 public class Log {
+	private Log() 
+	{
+		//modified code 
+	}
 	//logger for logging messages
     final static Logger LOGGER = Logger.getLogger("MyLog");
     static
@@ -20,17 +24,11 @@ public class Log {
             LOGGER.setUseParentHandlers(false); //disable the parent handlers to avoid duplicates log inputs
 
         } 
-        catch (IOException e) 
+        catch (IOException | SecurityException e) //modified code
         {
         	//handling the case where there is an issue with the file handler
             System.out.println("The logger here has a problem");
         } 
-        catch (SecurityException e) 
-        {
-        	//handling the case where there is a security issue with the file handler
-           System.out.println("The logger here has a problem");
-        }
-        
     }
     //to log a message at info level
     public static void ToLog(String message)

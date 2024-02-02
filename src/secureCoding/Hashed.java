@@ -3,8 +3,11 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
-public class Hashed 
+public  class Hashed 
 {
+	private Hashed() {
+		//modified
+	}
 	public static void main(String[] args) 
 	{
 		String string="It4d0ri@#"; //input string to be hashed
