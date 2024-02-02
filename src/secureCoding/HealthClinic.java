@@ -24,22 +24,21 @@ public class HealthClinic
             String[] columns = line.split("@");
             if (columns.length >= 2 && columns[0].equalsIgnoreCase(name) && columns[1].equals(hashPass)) 
             {
-
                 if (userType.equals(type))
                 {
                     switch (type) 
                     {
+                    case "Register":
+                        Register(name);
+                        break;
                         case "Doctor":
                             Doctor(name);
                             break;
                         case "Patient":
                             Patient(name);
                             break;
-                        case "Register":
-                            Register(name);
-                            break;
                         default:
-                            System.out.println("Invalid user type :(");
+                            System.out.println("Invalid");
                             break;
                     }
                 }
@@ -129,8 +128,8 @@ public class HealthClinic
     //write the user information to a file
     private static void WriteFile(String nameFile, String name, String hashPass, int phoneNumber, String gender,int age, String UserType) 
     {
+    	BufferedWriter bufferWrite = null;
         BufferedReader bufferReader = null;
-        BufferedWriter bufferWrite = null;
         try 
         {
             bufferReader = new BufferedReader(new FileReader(nameFile));
@@ -155,7 +154,7 @@ public class HealthClinic
         } 
         catch (IOException | NumberFormatException e) 
         {
-            System.out.println("Error writing to file");
+            System.out.println("Error: reading the file");
         } 
         finally 
         {
@@ -172,14 +171,14 @@ public class HealthClinic
             } 
             catch (IOException e) 
             {
-                System.out.println("error closing" + e.getMessage());
+                System.out.println("Error: closing" + e.getMessage());
             }
         }
     }
     //user registration process method
-    private static void Register(String User) 
+    private static void Register(String user) 
     {
-        System.out.println("Welcome you have logged in successfully " + User);
+        System.out.println("Welcome you have logged in successfully " + user);
         Scanner scanner = new Scanner(System.in);
         System.out.println("Register for a new user");
         int age;
@@ -193,16 +192,16 @@ public class HealthClinic
         System.out.println("Username: ");
         username = scanner.nextLine();
         Log.ToLog("The user tried to login" +username);
-        System.out.println("Password: ");
+        System.out.println("Password of the Registrar : ");
         password = scanner.nextLine();
         //checking if the password entered is valid
         if (passwordPolicy(password)) {
             String hashPass = getTheHash(password);
-            System.out.println("Gender: ");
+            System.out.println("Gender of the Registrar: ");
             gender = scanner.nextLine();
-            System.out.println("Age: ");
+            System.out.println("Ageof the Registrar: ");
             age = scanner.nextInt();
-            System.out.println("Phone Number: ");
+            System.out.println("Phone Number of the Registrar: ");
             phoneNumber = scanner.nextInt();
             scanner.nextLine(); 
             System.out.println("Are you a Doctor or a Patient? ");
@@ -285,10 +284,10 @@ public class HealthClinic
                     String gender = columns[3];
                     int age = Integer.parseInt(columns[4]);
                     System.out.println("Patient Information for " +name);
-                    System.out.println("Age: " + age);
-                    System.out.println("Name: " + patientName);
-                    System.out.println("Gender: " + gender);
-                    System.out.println("Phone Number: " + phoneNumber);
+                    System.out.println("Age of the Patient " + age);
+                    System.out.println("Name of the Patient: " + patientName);
+                    System.out.println("Gender of the Patient: " + gender);
+                    System.out.println("Phone Number of the Patient: " + phoneNumber);
                     break;//leave the loop after locating the patient information
                 }
             }
@@ -325,11 +324,11 @@ public class HealthClinic
                     int phoneNumber = Integer.parseInt(columns[2]);
                     String gender = columns[3];
                     int age = Integer.parseInt(columns[4]);
-                    System.out.println("Doctor Information for "+name);
-                    System.out.println("Name: " + dName);
-                    System.out.println("Age: " + age);
-                    System.out.println("Gender: " + gender);
-                    System.out.println("Phone Number: " + phoneNumber);
+                    System.out.println("Doctor information for "+name);
+                    System.out.println("Name of the Doctor: " + dName);
+                    System.out.println("Age of the Doctor: " + age);
+                    System.out.println("Gender of the Doctor: " + gender);
+                    System.out.println("Phone Number of the Doctor: " + phoneNumber);
                     break; //leave the loop after finding the doctor information
                 }
             }
@@ -366,16 +365,16 @@ public class HealthClinic
                 {
                     String situation = columns[2];
                     String treatment = columns[3];
-                    System.out.println("Medical Record for " +name);
-                    System.out.println("Medical Situation: " + situation);
-                    System.out.println("Medical Treatment: " + treatment);
+                    System.out.println("Medical Record for the Patient: " +name);
+                    System.out.println("Medical Situation for the Patient: " + situation);
+                    System.out.println("Medical Treatment for the Patient: " + treatment);
                     break; //leave the loop after finding the medical record
                 }
             }
         } 
         catch (IOException e) 
         {
-            System.out.println("Error, Read file");
+            System.out.println("Error: reading the file");
         } 
         finally
         {
@@ -388,7 +387,7 @@ public class HealthClinic
             }
             catch (IOException e) 
             {
-                System.out.println("Error, Close file");
+                System.out.println("Error closing");
             }
         }
     }
@@ -438,7 +437,7 @@ public class HealthClinic
         	bufferWriterMedical.newLine();
         } catch (IOException e) 
         {
-            System.out.println("Error writing the medical information to the file: " + e.getMessage());
+            System.out.println("Error writing the medical information" + e.getMessage());
         }
     }
 }
