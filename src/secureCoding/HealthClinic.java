@@ -283,7 +283,7 @@ public class HealthClinic
                     int phoneNumber = Integer.parseInt(columns[2]);
                     String gender = columns[3];
                     int age = Integer.parseInt(columns[4]);
-                    System.out.println("Patient Information for " +name);
+                    System.out.println("Patient information for " +name);
                     System.out.println("Age of the Patient " + age);
                     System.out.println("Name of the Patient: " + patientName);
                     System.out.println("Gender of the Patient: " + gender);
@@ -314,7 +314,7 @@ public class HealthClinic
     {
         BufferedReader doctor = null;
         try {
-            doctor = new BufferedReader(new FileReader("C:\\Users\\User\\Desktop\\secure coding\\Doctor.txt"));
+            doctor = new BufferedReader(new FileReader("C:\\Users\\User\\Desktop\\secure coding\\doctor.txt"));
             
             for (String line;(line = doctor.readLine()) != null;) {
                 String[] columns = line.split("@");
